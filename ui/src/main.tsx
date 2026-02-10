@@ -215,6 +215,12 @@ function EditorPage() {
   const [title, setTitle] = useState(typeParam === 'BOOK' ? 'Untitled Book' : 'Untitled Article');
   const [tags, setTags] = useState('');
   const [category, setCategory] = useState('');
+  const [mediumTags, setMediumTags] = useState('write-it');
+  const [mediumCanonicalUrl, setMediumCanonicalUrl] = useState('');
+  const [kdpDescription, setKdpDescription] = useState('');
+  const [kdpKeywords, setKdpKeywords] = useState('book');
+  const [kdpCategories, setKdpCategories] = useState('General');
+  const [kdpCoverUrl, setKdpCoverUrl] = useState('');
   const [status, setStatus] = useState('Start writing...');
   const [toolOutput, setToolOutput] = useState<string[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -330,18 +336,44 @@ function EditorPage() {
 
   async function handleExport(format: 'MARKDOWN' | 'HTML' | 'PDF' | 'EPUB') {
     if (!lastSavedId) return setStatus('Please save document before export.');
-    const result = await exportDocument(lastSavedId, format);
-    setStatus(`Export generated: ${result.fileName}`);
+    try {
+      const result = await exportDocument(lastSavedId, format);
+      const bytes = Uint8Array.from(atob(result.contentBase64), (ch) => ch.charCodeAt(0));
+      const blob = new Blob([bytes], { type: result.mimeType });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = result.fileName;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setStatus(`Export downloaded: ${result.fileName}`);
+    } catch (error) {
+      setStatus(`Export failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+    }
   }
 
   async function handlePublish(channel: 'MEDIUM' | 'KDP' | 'WRITE_IT') {
     if (!lastSavedId) return setStatus('Please save document before publishing.');
-    const result = channel === 'MEDIUM'
-      ? await publishMedium(lastSavedId)
-      : channel === 'KDP'
-        ? await publishKdp(lastSavedId)
-        : await publishWriteIt(lastSavedId);
-    setStatus(`${result.channel} status: ${result.status}`);
+    try {
+      const result = channel === 'MEDIUM'
+        ? await publishMedium(
+          lastSavedId,
+          mediumTags.split(',').map((value) => value.trim()).filter(Boolean),
+          mediumCanonicalUrl
+        )
+        : channel === 'KDP'
+          ? await publishKdp({
+            documentId: lastSavedId,
+            description: kdpDescription,
+            keywords: kdpKeywords.split(',').map((value) => value.trim()).filter(Boolean),
+            categories: kdpCategories.split(',').map((value) => value.trim()).filter(Boolean),
+            coverUrl: kdpCoverUrl
+          })
+          : await publishWriteIt(lastSavedId);
+      setStatus(`${result.channel} status: ${result.status} (${result.externalUrl})`);
+    } catch (error) {
+      setStatus(`Publish failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+    }
   }
 
   const wordCount = useMemo(() => {
@@ -377,6 +409,18 @@ function EditorPage() {
           <input id="doc-tags" value={tags} onChange={(event) => setTags(event.target.value)} placeholder="seo, writing" />
           <label htmlFor="doc-category">Category</label>
           <input id="doc-category" value={category} onChange={(event) => setCategory(event.target.value)} placeholder="Technology" />
+          <label htmlFor="medium-tags">Medium Tags (comma separated)</label>
+          <input id="medium-tags" value={mediumTags} onChange={(event) => setMediumTags(event.target.value)} placeholder="writing, productivity" />
+          <label htmlFor="medium-canonical">Medium Canonical URL</label>
+          <input id="medium-canonical" value={mediumCanonicalUrl} onChange={(event) => setMediumCanonicalUrl(event.target.value)} placeholder="https://your-site.com/original-post" />
+          <label htmlFor="kdp-description">KDP Description</label>
+          <textarea id="kdp-description" value={kdpDescription} onChange={(event) => setKdpDescription(event.target.value)} rows={3} placeholder="Book description for KDP listing" />
+          <label htmlFor="kdp-keywords">KDP Keywords (comma separated)</label>
+          <input id="kdp-keywords" value={kdpKeywords} onChange={(event) => setKdpKeywords(event.target.value)} placeholder="novel, fantasy, writing" />
+          <label htmlFor="kdp-categories">KDP Categories (comma separated)</label>
+          <input id="kdp-categories" value={kdpCategories} onChange={(event) => setKdpCategories(event.target.value)} placeholder="Fiction, Fantasy" />
+          <label htmlFor="kdp-cover">KDP Cover URL</label>
+          <input id="kdp-cover" value={kdpCoverUrl} onChange={(event) => setKdpCoverUrl(event.target.value)} placeholder="https://example.com/cover.jpg" />
 
           <div className="toolbar">
             <button type="button" onClick={() => exec('bold')}>Bold</button>
