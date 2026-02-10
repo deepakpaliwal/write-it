@@ -6,6 +6,14 @@ import type { DocumentItem, SnippetItem } from './types/content';
 import './main.css';
 
 const userId = 1;
+const editorMemoryKey = 'write-it.editor-memory.v1';
+
+type EditorMemory = {
+  title: string;
+  docType: 'ARTICLE' | 'BOOK';
+  contentHtml: string;
+  updatedAt: string;
+};
 
 function HomePage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
@@ -180,6 +188,8 @@ function EditorPage() {
   const [status, setStatus] = useState('Start writing...');
   const [saving, setSaving] = useState(false);
   const [lastSavedId, setLastSavedId] = useState<number | null>(null);
+  const [memoryUpdatedAt, setMemoryUpdatedAt] = useState<string | null>(null);
+  const [editorVersion, setEditorVersion] = useState(0);
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -187,6 +197,25 @@ function EditorPage() {
     setDocType(nextType);
     setTitle(nextType === 'BOOK' ? 'Untitled Book' : 'Untitled Article');
   }, [searchParams]);
+
+  useEffect(() => {
+    const rawMemory = window.localStorage.getItem(editorMemoryKey);
+    if (!rawMemory) return;
+
+    try {
+      const memory = JSON.parse(rawMemory) as EditorMemory;
+      setTitle(memory.title || (memory.docType === 'BOOK' ? 'Untitled Book' : 'Untitled Article'));
+      setDocType(memory.docType === 'BOOK' ? 'BOOK' : 'ARTICLE');
+      setMemoryUpdatedAt(memory.updatedAt ?? null);
+
+      if (editorRef.current && memory.contentHtml) {
+        editorRef.current.innerHTML = memory.contentHtml;
+      }
+      setStatus('Draft restored from memory.');
+    } catch {
+      setStatus('Could not read saved memory draft.');
+    }
+  }, []);
 
   function exec(command: string, value?: string) {
     document.execCommand(command, false, value);
@@ -215,10 +244,49 @@ function EditorPage() {
     }
   }
 
+  function saveDraftMemory() {
+    const memory: EditorMemory = {
+      title,
+      docType,
+      contentHtml: getEditorHtml(),
+      updatedAt: new Date().toISOString()
+    };
+    window.localStorage.setItem(editorMemoryKey, JSON.stringify(memory));
+    setMemoryUpdatedAt(memory.updatedAt);
+  }
+
+  function restoreDraftMemory() {
+    const rawMemory = window.localStorage.getItem(editorMemoryKey);
+    if (!rawMemory) {
+      setStatus('No memory draft found yet.');
+      return;
+    }
+
+    try {
+      const memory = JSON.parse(rawMemory) as EditorMemory;
+      setTitle(memory.title || (memory.docType === 'BOOK' ? 'Untitled Book' : 'Untitled Article'));
+      setDocType(memory.docType === 'BOOK' ? 'BOOK' : 'ARTICLE');
+      if (editorRef.current) {
+        editorRef.current.innerHTML = memory.contentHtml || '<p></p>';
+      }
+      setMemoryUpdatedAt(memory.updatedAt ?? null);
+      setEditorVersion((value) => value + 1);
+      setStatus('Draft restored from memory.');
+    } catch {
+      setStatus('Could not restore draft memory.');
+    }
+  }
+
+  function clearDraftMemory() {
+    window.localStorage.removeItem(editorMemoryKey);
+    setMemoryUpdatedAt(null);
+    setStatus('Draft memory cleared.');
+  }
+
   const wordCount = useMemo(() => {
     const text = getEditorText().trim();
     return text.length === 0 ? 0 : text.split(/\s+/).length;
-  }, [status]);
+  }, [status, editorVersion]);
 
   return (
     <div className="layout">
@@ -278,8 +346,14 @@ function EditorPage() {
 
           <div className="hero-actions">
             <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving...' : `Save ${docType}`}</button>
+            <button type="button" className="btn btn-secondary" onClick={saveDraftMemory}>Save Memory</button>
+            <button type="button" className="btn btn-secondary" onClick={restoreDraftMemory}>Restore Memory</button>
+            <button type="button" className="btn btn-secondary" onClick={clearDraftMemory}>Clear Memory</button>
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>Back to Home</button>
           </div>
+          <p className="footer-note">
+            Memory: {memoryUpdatedAt ? `saved at ${new Date(memoryUpdatedAt).toLocaleString()}` : 'not saved yet'}
+          </p>
         </form>
       </section>
     </div>
