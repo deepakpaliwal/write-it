@@ -39,6 +39,21 @@ public class Document {
     @Column(name = "reading_time_minutes", nullable = false)
     private int readingTimeMinutes;
 
+    @Column(name = "tags")
+    private String tags;
+
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "published_to_write_it", nullable = false)
+    private boolean publishedToWriteIt;
+
+    @Column(name = "write_it_slug")
+    private String writeItSlug;
+
+    @Column(name = "published_at")
+    private Instant publishedAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -71,6 +86,16 @@ public class Document {
     public void setWordCount(int wordCount) { this.wordCount = wordCount; }
     public int getReadingTimeMinutes() { return readingTimeMinutes; }
     public void setReadingTimeMinutes(int readingTimeMinutes) { this.readingTimeMinutes = readingTimeMinutes; }
+    public String getTags() { return tags; }
+    public void setTags(String tags) { this.tags = tags; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    public boolean isPublishedToWriteIt() { return publishedToWriteIt; }
+    public void setPublishedToWriteIt(boolean publishedToWriteIt) { this.publishedToWriteIt = publishedToWriteIt; }
+    public String getWriteItSlug() { return writeItSlug; }
+    public void setWriteItSlug(String writeItSlug) { this.writeItSlug = writeItSlug; }
+    public Instant getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(Instant publishedAt) { this.publishedAt = publishedAt; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }
