@@ -7,6 +7,8 @@ public record DocumentRequest(
     @NotBlank String title,
     @NotNull DocumentType type,
     String content,
-    @NotNull Long userId
+    @NotNull Long userId,
+    String tags,
+    String category
 ) {
 }

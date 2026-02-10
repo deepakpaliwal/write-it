@@ -8,6 +8,11 @@ export interface DocumentItem {
   userId: number;
   wordCount: number;
   readingTimeMinutes: number;
+  tags?: string;
+  category?: string;
+  publishedToWriteIt?: boolean;
+  writeItSlug?: string;
+  publishedAt?: string;
 }
 
 export interface SnippetItem {

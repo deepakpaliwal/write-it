@@ -18,22 +18,14 @@ public class DocumentService {
     @Transactional
     public Document create(DocumentRequest request) {
         Document document = new Document();
-        document.setTitle(request.title());
-        document.setType(request.type());
-        document.setContent(request.content());
-        document.setUserId(request.userId());
-        recalculateMetrics(document);
+        applyRequest(document, request);
         return documentRepository.save(document);
     }
 
     @Transactional
     public Document update(Long id, DocumentRequest request) {
         Document document = documentRepository.findById(id).orElseThrow();
-        document.setTitle(request.title());
-        document.setType(request.type());
-        document.setContent(request.content());
-        document.setUserId(request.userId());
-        recalculateMetrics(document);
+        applyRequest(document, request);
         return documentRepository.save(document);
     }
 
@@ -56,6 +48,26 @@ public class DocumentService {
 
     public List<DocumentVersion> listVersions(Long documentId) {
         return versionRepository.findByDocumentIdOrderByVersionNumberDesc(documentId);
+    }
+
+    public List<Document> listByUser(Long userId, String query, String tag) {
+        if (query != null && !query.isBlank()) {
+            return documentRepository.findByUserIdAndTitleContainingIgnoreCase(userId, query.trim());
+        }
+        if (tag != null && !tag.isBlank()) {
+            return documentRepository.findByUserIdAndTagsContainingIgnoreCase(userId, tag.trim());
+        }
+        return documentRepository.findByUserId(userId);
+    }
+
+    private void applyRequest(Document document, DocumentRequest request) {
+        document.setTitle(request.title());
+        document.setType(request.type());
+        document.setContent(request.content());
+        document.setUserId(request.userId());
+        document.setTags(request.tags());
+        document.setCategory(request.category());
+        recalculateMetrics(document);
     }
 
     private void recalculateMetrics(Document document) {

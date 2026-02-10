@@ -21,7 +21,7 @@ public class SnippetController {
     }
 
     @GetMapping
-    public List<Snippet> list(@RequestParam Long userId) {
+    public List<Snippet> list(@RequestParam("userId") Long userId) {
         return snippetRepository.findByUserIdOrderByIdDesc(userId);
     }
 
@@ -32,7 +32,7 @@ public class SnippetController {
     }
 
     @PostMapping("/{snippetId}/drop-in/{documentId}")
-    public String dropIntoDocument(@PathVariable Long snippetId, @PathVariable Long documentId) {
+    public String dropIntoDocument(@PathVariable("snippetId") Long snippetId, @PathVariable("documentId") Long documentId) {
         return "Snippet " + snippetId + " is ready to be inserted into document " + documentId;
     }
 }
