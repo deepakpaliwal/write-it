@@ -27,12 +27,14 @@ public class DocumentController {
     }
 
     @GetMapping
-    public List<Document> listByUser(@RequestParam Long userId) {
-        return documentRepository.findByUserId(userId);
+    public List<Document> listByUser(@RequestParam("userId") Long userId,
+                                     @RequestParam(value = "query", required = false) String query,
+                                     @RequestParam(value = "tag", required = false) String tag) {
+        return documentService.listByUser(userId, query, tag);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Document> getById(@PathVariable Long id) {
+    public ResponseEntity<Document> getById(@PathVariable("id") Long id) {
         return documentRepository.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -43,7 +45,7 @@ public class DocumentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Document> update(@PathVariable Long id, @RequestBody @Valid DocumentRequest request) {
+    public ResponseEntity<Document> update(@PathVariable("id") Long id, @RequestBody @Valid DocumentRequest request) {
         if (!documentRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -51,7 +53,7 @@ public class DocumentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         if (!documentRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -60,7 +62,7 @@ public class DocumentController {
     }
 
     @PostMapping("/{id}/snapshots")
-    public ResponseEntity<SnapshotResponse> snapshot(@PathVariable Long id) {
+    public ResponseEntity<SnapshotResponse> snapshot(@PathVariable("id") Long id) {
         if (!documentRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -68,7 +70,7 @@ public class DocumentController {
     }
 
     @GetMapping("/{id}/versions")
-    public ResponseEntity<List<DocumentVersion>> listVersions(@PathVariable Long id) {
+    public ResponseEntity<List<DocumentVersion>> listVersions(@PathVariable("id") Long id) {
         if (!documentRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

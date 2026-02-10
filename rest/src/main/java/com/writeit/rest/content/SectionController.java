@@ -20,12 +20,12 @@ public class SectionController {
     }
 
     @GetMapping("/chapters/{chapterId}/sections")
-    public List<Section> list(@PathVariable Long chapterId) {
+    public List<Section> list(@PathVariable("chapterId") Long chapterId) {
         return sectionRepository.findByChapterIdOrderByPositionAsc(chapterId);
     }
 
     @PostMapping("/chapters/{chapterId}/sections")
-    public Section create(@PathVariable Long chapterId, @RequestBody @Valid Section section) {
+    public Section create(@PathVariable("chapterId") Long chapterId, @RequestBody @Valid Section section) {
         section.setId(null);
         section.setChapterId(chapterId);
         return sectionRepository.save(section);

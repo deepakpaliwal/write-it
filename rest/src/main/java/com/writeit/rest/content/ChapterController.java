@@ -22,12 +22,12 @@ public class ChapterController {
     }
 
     @GetMapping("/documents/{documentId}/chapters")
-    public List<Chapter> list(@PathVariable Long documentId) {
+    public List<Chapter> list(@PathVariable("documentId") Long documentId) {
         return chapterRepository.findByDocumentIdOrderByPositionAsc(documentId);
     }
 
     @PostMapping("/documents/{documentId}/chapters")
-    public Chapter create(@PathVariable Long documentId, @RequestBody @Valid Chapter chapter) {
+    public Chapter create(@PathVariable("documentId") Long documentId, @RequestBody @Valid Chapter chapter) {
         chapter.setId(null);
         chapter.setDocumentId(documentId);
         return chapterRepository.save(chapter);
@@ -35,7 +35,7 @@ public class ChapterController {
 
     @PatchMapping("/documents/{documentId}/chapters/reorder")
     public ResponseEntity<List<Chapter>> reorder(
-        @PathVariable Long documentId,
+        @PathVariable("documentId") Long documentId,
         @RequestBody @Valid List<ChapterReorderItem> reorderItems
     ) {
         List<Chapter> chapters = chapterRepository.findByDocumentIdOrderByPositionAsc(documentId);

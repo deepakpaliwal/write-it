@@ -64,12 +64,18 @@ Users collect ideas, write content, arrange structure, verify with AI, add multi
   - Generate EPUB or PDF
   - Form to enter metadata (title, description, keywords, categories, cover)
   - Upload preparation (manual upload link or API if available)
+- Publish to Write It platform (internal blog hosting):
+  - Publish article/book excerpts to public Write It blog
+  - Generate SEO-friendly slug URL (`/blog/{slug}`)
+  - Maintain publish timestamp and status
 
 ### 2.5 Other Features
 - Search across user's documents and snippets
 - Tags / categories for organizing content
 - Dark / light theme support (frontend)
 - Responsive design (mobile + desktop)
+- Public blog homepage with latest published Write It posts
+- Public post detail page (slug-based routing)
 
 ## 3. Technical Requirements
 

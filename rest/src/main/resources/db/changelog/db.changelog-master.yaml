@@ -5,3 +5,12 @@ databaseChangeLog:
       file: db/changelog/sql/002_create_documents.sql
   - include:
       file: db/changelog/sql/003_content_management.sql
+
+  - include:
+      file: db/changelog/sql/004_writing_tools_export_other_features.sql
+
+  - include:
+      file: db/changelog/sql/005_write_it_blog_publishing.sql
+
+  - include:
+      file: db/changelog/sql/006_seed_default_local_user.sql
