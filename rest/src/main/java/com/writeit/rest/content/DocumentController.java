@@ -27,8 +27,10 @@ public class DocumentController {
     }
 
     @GetMapping
-    public List<Document> listByUser(@RequestParam Long userId) {
-        return documentRepository.findByUserId(userId);
+    public List<Document> listByUser(@RequestParam Long userId,
+                                     @RequestParam(required = false) String query,
+                                     @RequestParam(required = false) String tag) {
+        return documentService.listByUser(userId, query, tag);
     }
 
     @GetMapping("/{id}")
