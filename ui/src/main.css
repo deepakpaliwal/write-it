@@ -32,6 +32,7 @@ a {
   z-index: 20;
   margin-top: 0.5rem;
   backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.82);
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid #dbe4f0;
   border-radius: 14px;
@@ -64,6 +65,10 @@ a {
   gap: 1rem;
   align-items: center;
   font-weight: 600;
+}
+
+.menu .btn {
+  padding: 0.45rem 0.7rem;
 }
 
 .hero {
@@ -106,6 +111,11 @@ a {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.link-action {
+  font-weight: 600;
+  color: #4f46e5;
 }
 
 .hero-cards {
@@ -189,6 +199,51 @@ textarea {
   gap: 1rem;
 }
 
+.editor-shell {
+  padding: 1.4rem;
+}
+
+.editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.editor-meta {
+  font-weight: 700;
+  color: #475467;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+
+.toolbar button {
+  border: 1px solid #d0dcf0;
+  background: #f7faff;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rich-editor {
+  min-height: 360px;
+  border: 1px solid #d0dbef;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+  outline: none;
+}
+
+.rich-editor:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
 .footer-note {
   text-align: center;
   color: #6b7280;
@@ -197,6 +252,16 @@ textarea {
 
 @media (max-width: 900px) {
   .hero,
+  .about-contact,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .top-nav,
+  .menu,
+  .editor-head {
+    flex-wrap: wrap;
+  }
   .forms-grid,
   .about-contact,
   .grid-3,
