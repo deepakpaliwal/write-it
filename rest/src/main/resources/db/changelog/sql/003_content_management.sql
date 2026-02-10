@@ -1,9 +1,8 @@
 --liquibase formatted sql
 
 --changeset writeit:003-content-management
-ALTER TABLE documents
-    ADD COLUMN IF NOT EXISTS word_count INT NOT NULL DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS reading_time_minutes INT NOT NULL DEFAULT 0;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS word_count INT NOT NULL DEFAULT 0;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS reading_time_minutes INT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS chapters (
     id BIGSERIAL PRIMARY KEY,
