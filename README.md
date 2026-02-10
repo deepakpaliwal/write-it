@@ -39,5 +39,6 @@ npm run dev
 - Writing tools API endpoints: spell-check, SEO suggestions, AI verification (mock provider response).
 - Export API for documents to Markdown/HTML/PDF/EPUB payloads.
 - Publishing API stubs for Medium and Amazon KDP workflows.
+- Write-It internal blog publish endpoint and public blog listing APIs.
 - Search support on documents (title query + tag filter) and document metadata fields for tags/category.
 - UI additions for writing tools actions, export/publish actions, theme toggle, and search/tag/category management.

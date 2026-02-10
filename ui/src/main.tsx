@@ -11,8 +11,10 @@ import {
   getSnippets,
   publishKdp,
   publishMedium,
+  publishWriteIt,
   seoSuggestions,
-  spellCheck
+  spellCheck,
+  getBlogPosts
 } from './components/api';
 import type { DocumentItem, SnippetItem } from './types/content';
 import './main.css';
@@ -33,6 +35,7 @@ type EditorMemory = {
 function HomePage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [snippets, setSnippets] = useState<SnippetItem[]>([]);
+  const [blogPosts, setBlogPosts] = useState<DocumentItem[]>([]);
   const [title, setTitle] = useState('');
   const [docType, setDocType] = useState<'ARTICLE' | 'BOOK'>('ARTICLE');
   const [content, setContent] = useState('');
@@ -50,6 +53,7 @@ function HomePage() {
   async function refresh(query?: string, tag?: string) {
     setDocuments(await getDocuments(userId, query, tag));
     setSnippets(await getSnippets(userId));
+    setBlogPosts(await getBlogPosts());
   }
 
   useEffect(() => {
@@ -176,6 +180,20 @@ function HomePage() {
               <Link className="link-action" to={`/editor/new?type=${document.type}`}>Open editor</Link>{' '}
               <button className="btn btn-secondary" onClick={() => onSnapshot(document.id)}>Create Snapshot</button>
             </div>
+          </article>
+        ))}
+      </section>
+
+
+      <section className="section">
+        <h2>Write-It Blog</h2>
+        <p>Freshly published articles and books from our community.</p>
+        {blogPosts.length === 0 && <p>No posts published on Write-It yet.</p>}
+        {blogPosts.map((post) => (
+          <article key={post.id} className="list-item">
+            <strong>{post.title}</strong> • {post.type} • {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'draft'}
+            {post.tags && <div>Tags: {post.tags}</div>}
+            {post.writeItSlug && <div>Slug: /blog/{post.writeItSlug}</div>}
           </article>
         ))}
       </section>
@@ -316,9 +334,13 @@ function EditorPage() {
     setStatus(`Export generated: ${result.fileName}`);
   }
 
-  async function handlePublish(channel: 'MEDIUM' | 'KDP') {
+  async function handlePublish(channel: 'MEDIUM' | 'KDP' | 'WRITE_IT') {
     if (!lastSavedId) return setStatus('Please save document before publishing.');
-    const result = channel === 'MEDIUM' ? await publishMedium(lastSavedId) : await publishKdp(lastSavedId);
+    const result = channel === 'MEDIUM'
+      ? await publishMedium(lastSavedId)
+      : channel === 'KDP'
+        ? await publishKdp(lastSavedId)
+        : await publishWriteIt(lastSavedId);
     setStatus(`${result.channel} status: ${result.status}`);
   }
 
@@ -396,6 +418,7 @@ function EditorPage() {
             <button type="button" className="btn btn-secondary" onClick={() => handleExport('PDF')}>Export PDF</button>
             <button type="button" className="btn btn-secondary" onClick={() => handlePublish('MEDIUM')}>Publish Medium</button>
             <button type="button" className="btn btn-secondary" onClick={() => handlePublish('KDP')}>Publish KDP</button>
+            <button type="button" className="btn btn-secondary" onClick={() => handlePublish('WRITE_IT')}>Publish Write-It</button>
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>Back to Home</button>
           </div>
           <p className="footer-note">Memory: {memoryUpdatedAt ? `saved at ${new Date(memoryUpdatedAt).toLocaleString()}` : 'not saved yet'}</p>

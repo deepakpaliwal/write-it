@@ -10,6 +10,9 @@ export interface DocumentItem {
   readingTimeMinutes: number;
   tags?: string;
   category?: string;
+  publishedToWriteIt?: boolean;
+  writeItSlug?: string;
+  publishedAt?: string;
 }
 
 export interface SnippetItem {

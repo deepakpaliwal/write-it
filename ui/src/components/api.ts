@@ -94,3 +94,18 @@ export async function publishKdp(documentId: number) {
   });
   return response.json();
 }
+
+
+export async function publishWriteIt(documentId: number) {
+  const response = await fetch(`${API_BASE}/publishing/write-it`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documentId })
+  });
+  return response.json();
+}
+
+export async function getBlogPosts(): Promise<DocumentItem[]> {
+  const response = await fetch(`${API_BASE}/blog/posts`);
+  return response.json();
+}

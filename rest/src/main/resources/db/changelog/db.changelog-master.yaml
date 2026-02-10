@@ -8,3 +8,6 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/sql/004_writing_tools_export_other_features.sql
+
+  - include:
+      file: db/changelog/sql/005_write_it_blog_publishing.sql

@@ -45,6 +45,15 @@ public class Document {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "published_to_write_it", nullable = false)
+    private boolean publishedToWriteIt;
+
+    @Column(name = "write_it_slug")
+    private String writeItSlug;
+
+    @Column(name = "published_at")
+    private Instant publishedAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -81,6 +90,12 @@ public class Document {
     public void setTags(String tags) { this.tags = tags; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+    public boolean isPublishedToWriteIt() { return publishedToWriteIt; }
+    public void setPublishedToWriteIt(boolean publishedToWriteIt) { this.publishedToWriteIt = publishedToWriteIt; }
+    public String getWriteItSlug() { return writeItSlug; }
+    public void setWriteItSlug(String writeItSlug) { this.writeItSlug = writeItSlug; }
+    public Instant getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(Instant publishedAt) { this.publishedAt = publishedAt; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }
