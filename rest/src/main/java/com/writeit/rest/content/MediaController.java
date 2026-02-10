@@ -20,12 +20,12 @@ public class MediaController {
     }
 
     @GetMapping
-    public List<MediaFile> list(@PathVariable Long documentId) {
+    public List<MediaFile> list(@PathVariable("documentId") Long documentId) {
         return mediaFileRepository.findByDocumentId(documentId);
     }
 
     @PostMapping
-    public MediaFile add(@PathVariable Long documentId, @RequestBody @Valid MediaFile mediaFile) {
+    public MediaFile add(@PathVariable("documentId") Long documentId, @RequestBody @Valid MediaFile mediaFile) {
         mediaFile.setId(null);
         mediaFile.setDocumentId(documentId);
         return mediaFileRepository.save(mediaFile);

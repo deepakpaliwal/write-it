@@ -23,7 +23,7 @@ public class WriteItBlogController {
     }
 
     @GetMapping("/posts/{slug}")
-    public ResponseEntity<Document> getPostBySlug(@PathVariable String slug) {
+    public ResponseEntity<Document> getPostBySlug(@PathVariable("slug") String slug) {
         return documentRepository.findByWriteItSlugAndPublishedToWriteItTrue(slug)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());

@@ -20,7 +20,7 @@ public class DocumentExportController {
     }
 
     @GetMapping("/{id}/export")
-    public ResponseEntity<ExportResponse> export(@PathVariable Long id, @RequestParam ExportFormat format) {
+    public ResponseEntity<ExportResponse> export(@PathVariable("id") Long id, @RequestParam("format") ExportFormat format) {
         return documentRepository.findById(id)
             .map(document -> ResponseEntity.ok(buildResponse(document, format)))
             .orElseGet(() -> ResponseEntity.notFound().build());
