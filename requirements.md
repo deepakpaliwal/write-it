@@ -114,9 +114,8 @@ Users collect ideas, write content, arrange structure, verify with AI, add multi
         on-profile: dev
     datasource:
       url: jdbc:postgresql://localhost:5432/writing_dev
+  ... similar for uat, prod
   ```
-  # ... similar for uat, prod
-
 
 ### 3.2 Database
 - Main DB: PostgreSQL
