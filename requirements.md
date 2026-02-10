@@ -44,6 +44,7 @@ Users collect ideas, write content, arrange structure, verify with AI, add multi
 ### 2.3 Writing Tools
 - Spell check (client-side library + optional server-side)
 - Word count, reading time estimation
+- SEO Suggestions for better search
 - AI Verification Chat:
   - Select paragraph/section
   - Send to AI (via API – Grok, OpenAI, Anthropic, etc.)
