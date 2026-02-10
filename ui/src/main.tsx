@@ -1,22 +1,21 @@
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Link, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
-import { createDocument, createSnapshot, getDocuments, getSnippets } from './components/api';
-import React, { FormEvent, useEffect, useMemo, useState } from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createDocument, createSnippet, createSnapshot, getDocuments, getSnippets } from './components/api';
 import type { DocumentItem, SnippetItem } from './types/content';
 import './main.css';
 
 const userId = 1;
+const editorMemoryKey = 'write-it.editor-memory.v1';
+
+type EditorMemory = {
+  title: string;
+  docType: 'ARTICLE' | 'BOOK';
+  contentHtml: string;
+  updatedAt: string;
+};
 
 function HomePage() {
-  const [documents, setDocuments] = useState<DocumentItem[]>([]);
-  const [snippets, setSnippets] = useState<SnippetItem[]>([]);
-  const [status, setStatus] = useState('Welcome to Write It ✨');
-  const navigate = useNavigate();
-function ContentManagementPage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [snippets, setSnippets] = useState<SnippetItem[]>([]);
   const [title, setTitle] = useState('');
@@ -25,6 +24,7 @@ function ContentManagementPage() {
   const [snippetTitle, setSnippetTitle] = useState('');
   const [snippetContent, setSnippetContent] = useState('');
   const [status, setStatus] = useState('Welcome to Write It ✨');
+  const navigate = useNavigate();
 
   const totalWords = useMemo(() => documents.reduce((sum, document) => sum + document.wordCount, 0), [documents]);
 
@@ -35,9 +35,6 @@ function ContentManagementPage() {
 
   useEffect(() => {
     refresh().catch(() => setStatus('Backend not reachable yet. You can still draft in the rich editor.'));
-  }, []);
-
-    refresh().catch(() => setStatus('Backend not reachable yet. You can still explore UI and draft text.'));
   }, []);
 
   async function onCreateDocument(event: FormEvent) {
@@ -91,16 +88,13 @@ function ContentManagementPage() {
         <div>
           <h1>Build articles and books in one beautiful writing workspace.</h1>
           <p>
-            Start a new writing project in our rich editor with headings, formatting, links, code blocks and structured content support.
+            Start a new writing project in our rich editor with headings, formatting, links, code blocks and structured
+            content support.
           </p>
           <div className="hero-actions">
             <button className="btn btn-primary" onClick={() => navigate('/editor/new?type=ARTICLE')}>Create Article</button>
             <button className="btn btn-secondary" onClick={() => navigate('/editor/new?type=BOOK')}>Create Book</button>
-            Plan with notes, shape chapters with sections, generate a Table of Contents, and keep version history while your
-            team focuses on storytelling.
-          </p>
-          <div className="hero-actions">
-            <button className="btn btn-primary" onClick={() => startNewProject('ARTICLE')}>Start New Article</button>
+            <button className="btn btn-secondary" onClick={() => startNewProject('ARTICLE')}>Start New Article</button>
             <button className="btn btn-secondary" onClick={() => startNewProject('BOOK')}>Start New Book</button>
           </div>
         </div>
@@ -109,28 +103,6 @@ function ContentManagementPage() {
           <div className="stat-card"><strong>{snippets.length}</strong> collected notes</div>
           <div className="stat-card"><strong>{totalWords}</strong> total words drafted</div>
           <div className="stat-card">Status: {status}</div>
-        </div>
-      </section>
-
-      <section className="section">
-        <h2>What Write It helps you do</h2>
-        <div className="grid-3">
-          <article className="feature-card"><h3>🖋️ Rich Editor</h3><p>Write with bold, italic, headings, lists, quotes, code and links in a dedicated editor screen.</p></article>
-          <article className="feature-card"><h3>📚 Smart TOC & Structure</h3><p>Create chapters and sections for books and keep your outline organized.</p></article>
-          <article className="feature-card"><h3>🗒️ Collect Notes</h3><p>Capture ideas as snippets and reuse them during article or chapter writing.</p></article>
-          <article className="feature-card"><h3>📚 Smart TOC & Structure</h3><p>Create chapters and sections for books and keep your outline organized.</p></article>
-          <article className="feature-card"><h3>🗒️ Collect Notes</h3><p>Capture ideas as snippets and reuse them during article or chapter writing.</p></article>
-          <article className="feature-card"><h3>🕒 Version History</h3><p>Create snapshots before major edits so you can review and restore confidently.</p></article>
-        </div>
-      </section>
-
-      <section className="section">
-        <h2>Product in action</h2>
-        <p>From ideation to publish-ready manuscript, Write It is designed for long-form content creation.</p>
-        <div className="product-images">
-          <img alt="Writers collaborating on content planning" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80" />
-          <img alt="Notebook and laptop for writing notes" src="https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&w=1200&q=80" />
-          <img alt="Books and publishing workflow" src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1200&q=80" />
         </div>
       </section>
 
@@ -164,8 +136,6 @@ function ContentManagementPage() {
 
       <section className="section">
         <h2>Recent documents</h2>
-        {documents.length === 0 && <p>No documents yet. Start with Create Article or Create Book.</p>}
-        <h2>Documents</h2>
         {documents.length === 0 && <p>No documents yet. Start an article or book above.</p>}
         {documents.map((document) => (
           <article key={document.id} className="list-item">
@@ -178,10 +148,6 @@ function ContentManagementPage() {
         ))}
       </section>
 
-      <section className="section about-contact">
-        <article id="about" className="panel">
-          <h3>About Us</h3>
-          <p>Write It is built for creators who publish articles and books with structured writing and snapshots.</p>
       <section className="section">
         <h2>Collected Notes</h2>
         {snippets.length === 0 && <p>No notes yet. Capture ideas in the Project Studio.</p>}
@@ -207,6 +173,8 @@ function ContentManagementPage() {
           <p>Support: support@writeit.app</p>
         </article>
       </section>
+
+      <p className="footer-note">Write It • Craft your next article or book with confidence.</p>
     </div>
   );
 }
@@ -220,6 +188,8 @@ function EditorPage() {
   const [status, setStatus] = useState('Start writing...');
   const [saving, setSaving] = useState(false);
   const [lastSavedId, setLastSavedId] = useState<number | null>(null);
+  const [memoryUpdatedAt, setMemoryUpdatedAt] = useState<string | null>(null);
+  const [editorVersion, setEditorVersion] = useState(0);
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -227,6 +197,25 @@ function EditorPage() {
     setDocType(nextType);
     setTitle(nextType === 'BOOK' ? 'Untitled Book' : 'Untitled Article');
   }, [searchParams]);
+
+  useEffect(() => {
+    const rawMemory = window.localStorage.getItem(editorMemoryKey);
+    if (!rawMemory) return;
+
+    try {
+      const memory = JSON.parse(rawMemory) as EditorMemory;
+      setTitle(memory.title || (memory.docType === 'BOOK' ? 'Untitled Book' : 'Untitled Article'));
+      setDocType(memory.docType === 'BOOK' ? 'BOOK' : 'ARTICLE');
+      setMemoryUpdatedAt(memory.updatedAt ?? null);
+
+      if (editorRef.current && memory.contentHtml) {
+        editorRef.current.innerHTML = memory.contentHtml;
+      }
+      setStatus('Draft restored from memory.');
+    } catch {
+      setStatus('Could not read saved memory draft.');
+    }
+  }, []);
 
   function exec(command: string, value?: string) {
     document.execCommand(command, false, value);
@@ -245,12 +234,7 @@ function EditorPage() {
     event.preventDefault();
     setSaving(true);
     try {
-      const created = await createDocument({
-        title,
-        type: docType,
-        content: getEditorHtml(),
-        userId
-      });
+      const created = await createDocument({ title, type: docType, content: getEditorHtml(), userId });
       setLastSavedId(created.id);
       setStatus(`Saved ${docType.toLowerCase()} successfully.`);
     } catch {
@@ -260,10 +244,49 @@ function EditorPage() {
     }
   }
 
+  function saveDraftMemory() {
+    const memory: EditorMemory = {
+      title,
+      docType,
+      contentHtml: getEditorHtml(),
+      updatedAt: new Date().toISOString()
+    };
+    window.localStorage.setItem(editorMemoryKey, JSON.stringify(memory));
+    setMemoryUpdatedAt(memory.updatedAt);
+  }
+
+  function restoreDraftMemory() {
+    const rawMemory = window.localStorage.getItem(editorMemoryKey);
+    if (!rawMemory) {
+      setStatus('No memory draft found yet.');
+      return;
+    }
+
+    try {
+      const memory = JSON.parse(rawMemory) as EditorMemory;
+      setTitle(memory.title || (memory.docType === 'BOOK' ? 'Untitled Book' : 'Untitled Article'));
+      setDocType(memory.docType === 'BOOK' ? 'BOOK' : 'ARTICLE');
+      if (editorRef.current) {
+        editorRef.current.innerHTML = memory.contentHtml || '<p></p>';
+      }
+      setMemoryUpdatedAt(memory.updatedAt ?? null);
+      setEditorVersion((value) => value + 1);
+      setStatus('Draft restored from memory.');
+    } catch {
+      setStatus('Could not restore draft memory.');
+    }
+  }
+
+  function clearDraftMemory() {
+    window.localStorage.removeItem(editorMemoryKey);
+    setMemoryUpdatedAt(null);
+    setStatus('Draft memory cleared.');
+  }
+
   const wordCount = useMemo(() => {
     const text = getEditorText().trim();
     return text.length === 0 ? 0 : text.split(/\s+/).length;
-  }, [status]);
+  }, [status, editorVersion]);
 
   return (
     <div className="layout">
@@ -323,15 +346,16 @@ function EditorPage() {
 
           <div className="hero-actions">
             <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving...' : `Save ${docType}`}</button>
+            <button type="button" className="btn btn-secondary" onClick={saveDraftMemory}>Save Memory</button>
+            <button type="button" className="btn btn-secondary" onClick={restoreDraftMemory}>Restore Memory</button>
+            <button type="button" className="btn btn-secondary" onClick={clearDraftMemory}>Clear Memory</button>
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>Back to Home</button>
           </div>
+          <p className="footer-note">
+            Memory: {memoryUpdatedAt ? `saved at ${new Date(memoryUpdatedAt).toLocaleString()}` : 'not saved yet'}
+          </p>
         </form>
       </section>
-          <p>Location: Remote-first team, global writers welcome.</p>
-        </article>
-      </section>
-
-      <p className="footer-note">Write It • Craft your next article or book with confidence.</p>
     </div>
   );
 }
@@ -342,7 +366,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/editor/new" element={<EditorPage />} />
-        <Route path="/" element={<ContentManagementPage />} />
       </Routes>
     </BrowserRouter>
   );
