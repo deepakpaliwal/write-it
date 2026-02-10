@@ -34,3 +34,10 @@ npm run dev
 ## Database profiles
 - `local`: H2 in-memory
 - `dev`, `uat`, `prod`: PostgreSQL placeholders
+
+## Implemented now (Requirement 2.3/2.4/2.5 - baseline)
+- Writing tools API endpoints: spell-check, SEO suggestions, AI verification (mock provider response).
+- Export API for documents to Markdown/HTML/PDF/EPUB payloads.
+- Publishing API stubs for Medium and Amazon KDP workflows.
+- Search support on documents (title query + tag filter) and document metadata fields for tags/category.
+- UI additions for writing tools actions, export/publish actions, theme toggle, and search/tag/category management.

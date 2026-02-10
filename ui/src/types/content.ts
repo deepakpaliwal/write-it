@@ -8,6 +8,8 @@ export interface DocumentItem {
   userId: number;
   wordCount: number;
   readingTimeMinutes: number;
+  tags?: string;
+  category?: string;
 }
 
 export interface SnippetItem {
