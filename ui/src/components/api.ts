@@ -136,67 +136,6 @@ export async function getBlogPosts(): Promise<DocumentItem[]> {
   return response.json();
 }
 
-export async function spellCheck(text: string): Promise<{ suggestions: string[] }> {
-  const response = await fetch(`${API_BASE}/writing-tools/spell-check`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  });
-  return response.json();
-}
-
-export async function seoSuggestions(title: string, content: string): Promise<{ wordCount: number; suggestions: string[] }> {
-  const response = await fetch(`${API_BASE}/writing-tools/seo-suggestions`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, content })
-  });
-  return response.json();
-}
-
-export async function aiVerify(text: string): Promise<{ provider: string; suggestions: string[] }> {
-  const response = await fetch(`${API_BASE}/writing-tools/ai-verify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  });
-  return response.json();
-}
-
-export async function exportDocument(documentId: number, format: 'MARKDOWN' | 'HTML' | 'PDF' | 'EPUB') {
-  const response = await fetch(`${API_BASE}/documents/${documentId}/export?format=${format}`);
-  return response.json();
-}
-
-export async function publishMedium(documentId: number) {
-  const response = await fetch(`${API_BASE}/publishing/medium`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ documentId, tags: ['write-it'], canonicalUrl: '' })
-  });
-  return response.json();
-}
-
-export async function publishKdp(documentId: number) {
-  const response = await fetch(`${API_BASE}/publishing/kdp`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ documentId, description: '', keywords: ['book'], categories: ['General'], coverUrl: '' })
-  });
-  return response.json();
-}
 
 
-export async function publishWriteIt(documentId: number) {
-  const response = await fetch(`${API_BASE}/publishing/write-it`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ documentId })
-  });
-  return response.json();
-}
 
-export async function getBlogPosts(): Promise<DocumentItem[]> {
-  const response = await fetch(`${API_BASE}/blog/posts`);
-  return response.json();
-}
